@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Call</title>
+<style>
+  :root { color-scheme: light dark; --bg:#EEF2F1; --fg:#13201E; --muted:#5A6A67; --accent:#0D6B5E; --ink:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0E1514; --fg:#E2EBE9; --muted:#93A4A0; --accent:#43B5A2; --ink:#04211C; } }
+  html, body { height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,sans-serif; }
+  main { min-height:100%; display:grid; place-content:center; gap:16px; padding:24px; text-align:center; }
+  a.call { display:block; background:var(--accent); color:var(--ink); text-decoration:none; font-size:24px; font-weight:700; padding:20px 28px; border-radius:16px; }
+  p { color:var(--muted); margin:0; font-size:15px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="call" id="call" href="#">Call</a>
+  <p id="msg">Opening your phone's dialer…</p>
+</main>
+<script>
+  // The number arrives after "#", which browsers never send to the server.
+  var raw = decodeURIComponent(location.hash.slice(1)).replace(/[^\d+]/g, "");
+  var digits = raw.replace(/^\+?1?(\d{10})$/, "$1");
+  var call = document.getElementById("call"), msg = document.getElementById("msg");
+  if (/^\d{10}$/.test(digits)) {
+    var tel = "tel:+1" + digits;
+    call.href = tel;
+    call.textContent = "Call (" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6);
+    msg.textContent = "If your phone didn't ask to call, tap the button. Close this page afterward to get back to Claude.";
+    location.href = tel;
+  } else if (/^\+?\d{7,15}$/.test(raw)) {
+    call.href = "tel:" + raw; call.textContent = "Call " + raw;
+    msg.textContent = "Tap to call. Close this page afterward to get back to Claude.";
+    location.href = "tel:" + raw;
+  } else {
+    call.hidden = true;
+    msg.textContent = "No phone number was passed to this page.";
+  }
+</script>
+</body>
+</html>
